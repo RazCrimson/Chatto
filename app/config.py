@@ -10,11 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # MongoDB Credentials
-MONGODB_DB = environ.get("MONGODB_DB", "")
-MONGODB_HOST = environ.get("MONGODB_HOST", "localhost")
-MONGODB_PORT = int(environ.get("MONGODB_PORT", 27017))
-MONGODB_USERNAME = environ.get("MONGODB_USERNAME", "")
-MONGODB_PASSWORD = environ.get("MONGODB_PASSWORD", "")
+MONGODB_CONNECTION_STRING = environ.get("MONGODB_CONNECTION_STRING", "")
 
 # App configuration
 APP_HOST = environ.get("APP_HOST", "127.0.0.1")
