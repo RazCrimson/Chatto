@@ -1,7 +1,7 @@
 import datetime
 
-from app.models import db
-from app.models.user import User
+from . import db
+from .user import User
 
 
 class MessageToForward(db.Document):
