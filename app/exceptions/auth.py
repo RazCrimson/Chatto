@@ -5,7 +5,7 @@ class AuthException(ChatApplicationException):
     """
     Base Exception for authentication related errors
     """
-    RESPONSE_CODE = 403
+    RESPONSE_CODE = 401
     ERROR_CODE = 1000
     MESSAGE = "Authentication Error"
 
@@ -28,7 +28,23 @@ class InvalidPasswordException(AuthException):
 
 class InvalidTokenException(AuthException):
     """
-    Raised when the token is invalid or expired
+    Raised when the access token is invalid
     """
-    ERROR_CODE = 1003
-    MESSAGE = "Invalid Token!"
+    ERROR_CODE = 1100
+    MESSAGE = "Invalid Access Token!"
+
+
+class InvalidAccessTokenException(InvalidTokenException):
+    """
+    Raised when the access token is invalid
+    """
+    ERROR_CODE = 1101
+    MESSAGE = "Invalid Access Token!"
+
+
+class InvalidRefreshTokenException(InvalidTokenException):
+    """
+    Raised when the refresh token is invalid
+    """
+    ERROR_CODE = 1102
+    MESSAGE = "Invalid Refresh Token!"
