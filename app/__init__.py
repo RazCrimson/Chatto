@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 from . import config
 from .authentication import jwt
 from .models import db
+from .resources import api
 
 
 def create_flask_app():
@@ -30,5 +31,8 @@ def create_flask_app():
 
     # Initializing Bcrypt module
     bcrypt = Bcrypt(flask_app)
+
+    # Initializing API Endpoints
+    api.init_app(flask_app)
 
     return flask_app
