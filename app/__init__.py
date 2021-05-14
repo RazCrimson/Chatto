@@ -7,6 +7,7 @@ from . import config
 from .authentication import jwt
 from .models import db
 from .resources import api
+from .socket_events import socket_io
 
 
 def create_flask_app():
@@ -34,5 +35,7 @@ def create_flask_app():
 
     # Initializing API Endpoints
     api.init_app(flask_app)
+
+    socket_io.init_app(flask_app)
 
     return flask_app
