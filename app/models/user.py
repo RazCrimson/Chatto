@@ -3,6 +3,7 @@ import datetime
 from flask_bcrypt import generate_password_hash, check_password_hash
 
 from . import db
+from ..exceptions import UserNotFoundException
 
 
 class User(db.Document):
@@ -12,6 +13,7 @@ class User(db.Document):
     username = db.StringField(unique=True, required=True, null=False, max_length=30)
     hashed_password = db.StringField(required=True, null=False)
     created_at = db.DateTimeField(null=False, default=datetime.datetime.utcnow)
+    rsa_public_key = db.BinaryField()
 
     @property
     def password(self):
@@ -29,3 +31,10 @@ class User(db.Document):
 
     def __str__(self):
         return f'<USER: {self.pk}>'
+
+    @classmethod
+    def get_user_by_username(cls, username):
+        users = cls.objects(username=username)
+        if not users:
+            raise UserNotFoundException
+        return users[0]

@@ -11,7 +11,7 @@ class UserController:
     @classmethod
     def create(cls, username, password) -> User:
         try:
-            cls.get_user_by_username(username)
+            User.get_user_by_username(username)
         except UserNotFoundException:
             new_user = User()
             new_user.username = username
@@ -24,7 +24,7 @@ class UserController:
 
     @classmethod
     def login(cls, username, password):
-        user = cls.get_user_by_username(username)
+        user = User.get_user_by_username(username)
         if not user.check_password(password):
             raise InvalidPasswordException
 
@@ -51,10 +51,3 @@ class UserController:
         resp = make_response({"message": f"Access Token Updated!"}, 200)
         set_access_cookies(resp, access_token)
         return resp
-
-    @classmethod
-    def get_user_by_username(cls, username) -> User:
-        users = User.objects(username=username)
-        if not users:
-            raise UserNotFoundException
-        return users[0]
