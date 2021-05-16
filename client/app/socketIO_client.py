@@ -1,14 +1,15 @@
-from requests import Session
 from socketio import ClientNamespace
 
+from .HTTP_client import HTTPClient
+from .constants import config
 from .models import User, Message
 
 
 class SocketIOChatClient(ClientNamespace):
 
-    def __init__(self, namespace, user: User, session: Session, shared_message_queue: list, shared_buffer: list):
+    def __init__(self, namespace, user: User, http_client: HTTPClient, shared_message_queue: list, shared_buffer: list):
         self.user = user
-        self.session = session
+        self.http_client = http_client
         self.shared_message_queue = shared_message_queue
         self.shared_buffer = shared_buffer
         self.is_authenticated = False
@@ -16,7 +17,7 @@ class SocketIOChatClient(ClientNamespace):
 
     def on_connect(self):
         print(f"Connected to server.\nAuthenticating as {self.user.username}...")
-        cookies = self.session.cookies._cookies['127.0.0.1']
+        cookies = self.http_client.session.cookies._cookies[config['DOMAIN']]
         cookie = cookies['/']['access_token_cookie']
         token = cookie.value
         self.emit('jwt', token)
@@ -24,10 +25,14 @@ class SocketIOChatClient(ClientNamespace):
     def on_disconnect(self):
         print('Disconnected from server....')
 
-    def on_err(self, err_msg):
-        print('Error: ', err_msg)
+    def on_err(self, err_json):
+        if err_json.get('status_code') == 401:
+            self.is_authenticated = False
+            self.http_client.refresh_access_token()
+        else:
+            print('Error from Server:', err_json.get('msg'))
 
-    def on_authenticated(self, json):
+    def on_authenticated(self):
         self.is_authenticated = True
         print('Authentication Succeeded!')
 
@@ -41,13 +46,6 @@ class SocketIOChatClient(ClientNamespace):
             msg = Message(sender_id, receiver_id, message_body, created_at)
             self.shared_message_queue.append(msg)
 
-    def on_messages(self, messages):
-        for json_data in messages:
-            try:
-                self.on_message(json_data)
-            except Exception as e:
-                print(e)
-
     def send_message(self, receiver_id, message_body):
         json_data = {
             "receiver_id": receiver_id,
@@ -57,4 +55,3 @@ class SocketIOChatClient(ClientNamespace):
 
     def get_messages(self, receiver_id):
         self.emit('get_messages', receiver_id)
-

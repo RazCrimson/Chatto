@@ -1,14 +1,12 @@
 import json
-from typing import Tuple, Union
 from base64 import b64encode, b64decode
+from typing import Tuple, Union
+
 import requests
 
+from .constants import config
 from .crypto import CryptoHandler
-
 from .models import User
-
-HOST = "http://127.0.0.1:5000"
-USER_ENDPOINT = f"{HOST}/user"
 
 
 class HTTPClient:
@@ -33,7 +31,7 @@ class HTTPClient:
         }
 
         # Parse Response
-        resp = requests.post(USER_ENDPOINT + '/register', data)
+        resp = requests.post(config['HOST'] + '/user/register', data)
         response_json = json.loads(resp.text)
         msg = response_json['msg']
 
@@ -49,7 +47,7 @@ class HTTPClient:
             "password": hashed_password
         }
 
-        res = self.session.post(USER_ENDPOINT + '/signin', data)
+        res = self.session.post(config['HOST'] + '/user/signin', data)
         if res.status_code != 200:
             raise Exception('Invalid Credentials')
         response_json = json.loads(res.text)
@@ -68,7 +66,7 @@ class HTTPClient:
         return user, crypto_handler
 
     def refresh_access_token(self) -> bool:
-        res = self.session.get(USER_ENDPOINT + '/refresh')
+        res = self.session.get(config['HOST'] + '/user/refresh')
         if res.status_code == 200:
             return True
         self.is_authenticated = False
@@ -81,7 +79,7 @@ class HTTPClient:
         else:
             query += f'username={username}'
 
-        res = self.session.get(USER_ENDPOINT + '/details' + query)
+        res = self.session.get(config['HOST'] + '/user/details' + query)
         if res.status_code != 200:
             if retry:
                 self.refresh_access_token()
@@ -96,17 +94,6 @@ class HTTPClient:
         return user
 
     def logout(self):
-        pass
-
-
-if __name__ == '__main__':
-    HOST = "http://127.0.0.1:5000"
-    USER_ENDPOINT = f"{HOST}/user"
-
-    username = 'Raz1'
-    password = 'password@123'
-    session = requests.Session()
-    client = HTTPClient(session)
-    user, crypto = client.login(username, password)
-    client.refresh_access_token()
-    print(client.get_user_details(username="Raz"))
+        res = self.session.delete(config['HOST'] + '/user/signout')
+        response_json = json.loads(res.text)
+        print(response_json.get('msg'))
