@@ -1,7 +1,7 @@
 LOCALHOST = '127.0.0.1'
 HTTP_LOCALHOST = f'http://{LOCALHOST}:5000'
 
-DEPLOY = 'chatt-o.herokuapp.com'
+DEPLOY = 'chatto.ajpk.me'
 HTTPS_DEPLOY = f'https://{DEPLOY}'
 
 config = {}
