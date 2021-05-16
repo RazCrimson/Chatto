@@ -9,7 +9,7 @@ from ..models import User
 class UserController:
 
     @classmethod
-    def create(cls, username, password, pub_key, encrypted_priv_key) -> User:
+    def register(cls, username, password, pub_key, encrypted_priv_key) -> User:
         try:
             User.get_user_by_username(username)
         except UserNotFoundError:
