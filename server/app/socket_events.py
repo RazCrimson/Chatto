@@ -1,41 +1,20 @@
+import time
 from datetime import datetime
 
-from bidict import bidict
 from flask import request
-from flask_jwt_extended import decode_token
-from flask_socketio import SocketIO, Namespace, emit, disconnect, join_room, leave_room
+from flask_jwt_extended import decode_token, exceptions as flask_jwt_exceptions
+from flask_socketio import SocketIO, Namespace, emit, join_room, leave_room, disconnect
+from jwt import exceptions as py_jwt_exceptions
 
-from .exceptions import ChatApplicationException
+from .exceptions import ChatApplicationException, InvalidTokenError
 from .models import User, Message
 
 socket_io = SocketIO()
 
 
-def custom_error_handler(err_event="err"):
-    """
-     A custom parameterised decorator to handle exceptions for socketIO interactions
-    """
-
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            try:
-                func(*args, **kwargs)
-            except ChatApplicationException as err:
-                emit(err_event, err.MESSAGE)
-            except Exception as err:
-                print('Disconnecting with client due to error: ', type(err), err)
-                emit(err_event, {})
-                disconnect()
-
-        return wrapper
-
-    return decorator
-
-
 class ChatNamespace(Namespace):
     sid_to_user_id = {}
     user_id_to_sids = {}
-    current_connections = bidict()
 
     @classmethod
     def on_connect(cls):
@@ -51,10 +30,8 @@ class ChatNamespace(Namespace):
             cls.user_id_to_sids[user_id] = set()
         cls.user_id_to_sids[user_id].add(request.sid)
         cls.sid_to_user_id[request.sid] = user_id
-        # cls.current_connections[user_id] = request.sid
         join_room(user_id)
-        # message = Message.get_unreceived_messages(user_id)
-        emit('authenticated', {})
+        emit('authenticated')
 
     @classmethod
     def on_disconnect(cls):
@@ -66,10 +43,10 @@ class ChatNamespace(Namespace):
 
     @classmethod
     def on_message(cls, json_data):
+        sender_id = cls.sid_to_user_id[request.sid]
         receiver_id = json_data['receiver_id']
         message_body = json_data['message_body']
         User.get_user_by_id(receiver_id)
-        sender_id = cls.sid_to_user_id[request.sid]
         created_at = datetime.utcnow()
         forwarded_at = None
 
@@ -101,13 +78,25 @@ class ChatNamespace(Namespace):
         user = User.get_user_by_id(cls.sid_to_user_id[request.sid])
         other_user = User.get_user_by_id(other_user_id)
         messages = Message.get_chat_history(user.pk, other_user.pk)
-        emit('messages', messages)
+        for m in messages:
+            json_data = {
+                "sender_id": str(m["sender_id"]),
+                "receiver_id": str(m["receiver_id"]),
+                "message_body": m["message_body"],
+                "created_at": str(m["created_at"]),
+            }
+            emit('message', json_data)
+            time.sleep(0.1)
 
-    @classmethod
-    def on_list_of_connections(cls):
-        user_id = cls.current_connections.get(request.sid)
-        if not user_id:
-            raise ChatApplicationException('User not Authenticated')
+
+@socket_io.on_error('/chat')
+def error_handler(err):
+    if isinstance(err, ChatApplicationException):
+        emit('err', err.json())
+    elif isinstance(err, py_jwt_exceptions.PyJWTError) or isinstance(err, flask_jwt_exceptions.JWTExtendedException):
+        emit('err', InvalidTokenError.json())
+    else:
+        disconnect()
 
 
 socket_io.on_namespace(ChatNamespace('/chat'))
