@@ -13,6 +13,7 @@ class ChatApplicationException(Exception):
     @classmethod
     def json(cls):
         return {
+            "status_code": cls.RESPONSE_CODE,
             "error_code": cls.ERROR_CODE,
             "type": str(cls.__name__),
             "msg": cls.MESSAGE
