@@ -12,7 +12,7 @@ class JWTHandler:
 
     @classmethod
     def generate_tokens(cls, user: User):
-        session_data = {"id": user.get_mongo_id(), "username": user.username}
+        session_data = {"id": user.get_id(), "username": user.username}
         access_token = create_access_token(identity=session_data, fresh=True)
         refresh_token = create_refresh_token(identity=session_data)
         return access_token, refresh_token

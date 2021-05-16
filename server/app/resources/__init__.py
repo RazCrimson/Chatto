@@ -1,8 +1,11 @@
-from flask_restful import Api
+from .utils import ExtendedAPI
 
-from .user import UserAuthResource, UserSignUpResource
+from .user import UserSignInResource, UserSignUpResource, UserDetailsResource, UserRefreshResource, UserSignOutResource
 
-api = Api()
+api = ExtendedAPI()
 
-api.add_resource(UserSignUpResource, '/register')
-api.add_resource(UserAuthResource, '/user')
+api.add_resource(UserSignUpResource, '/user/register')
+api.add_resource(UserSignInResource, '/user/signin')
+api.add_resource(UserSignOutResource, '/user/signout')
+api.add_resource(UserRefreshResource, '/user/refresh')
+api.add_resource(UserDetailsResource, '/user/details')
