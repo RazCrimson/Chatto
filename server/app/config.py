@@ -16,7 +16,7 @@ MONGODB_CONNECTION_STRING = environ.get("MONGODB_CONNECTION_STRING", "")
 # App configuration
 APP_HOST = environ.get("APP_HOST", "127.0.0.1")
 APP_PORT = int(environ.get("APP_PORT", 5000))
-APP_DEBUG = environ.get("APP_DEBUG", True)
+APP_DEBUG = bool(int(environ.get("APP_DEBUG", False)))
 
 # JWT Secret
 JWT_SECRET_KEY = environ.get("JWT_SECRET_KEY", "")
