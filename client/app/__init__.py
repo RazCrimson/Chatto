@@ -42,7 +42,7 @@ class Client:
         print('Establishing a SocketIO connection to the server...')
         print('The server on Heroku is running on gunicorn which is not the best with socketIO. '
               'So retry in case the socketIO connection fails :)')
-        sio.connect(config['HOST'], namespaces=['/chat'], wait_timeout=30, wait=True)
+        sio.connect(f"wss://{config['DOMAIN']}", namespaces=['/chat'], wait_timeout=30, wait=True)
         sio.start_background_task(self.message_decryption_loop)
         sio.start_background_task(self.message_display_loop)
 

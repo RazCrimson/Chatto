@@ -15,6 +15,7 @@ def create_flask_app():
 
     # Initializing MongoDB Connection
     flask_app.config['MONGODB_SETTINGS'] = {'host': config.MONGODB_CONNECTION_STRING}
+    flask_app.config['MONGODB_CONNECT'] = False
     db.init_app(flask_app)
 
     # Initializing JWT Manager
