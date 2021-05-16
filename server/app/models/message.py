@@ -37,7 +37,19 @@ class Message(db.Document):
             {"$sort": {"created_at": 1}}
         ]
         messages = Message.objects().aggregate(pipeline)
-        return messages
+        json_data = []
+        for m in messages:
+            data = {
+                "sender_id": str(m["sender_id"]),
+                "receiver_id": str(m["receiver_id"]),
+                "message_body": m["message_body"],
+                "created_at": str(m["created_at"]),
+            }
+            json_data.append(data)
+            if m["forwarded_at"]:
+                m["forwarded_at"] = datetime.utcnow
+                m.save()
+        return json_data
 
     @staticmethod
     def get_unreceived_messages(user_id):
@@ -51,8 +63,5 @@ class Message(db.Document):
                 }
             }
         ]
-        messages_cursor = Message.objects().aggregate(pipeline)
-        messages = []
-        for message in messages_cursor:
-            messages.append(message)
+        messages = Message.objects().aggregate(pipeline)
         return messages
