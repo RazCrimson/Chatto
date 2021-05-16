@@ -1,4 +1,4 @@
-class ChatApplicationException(BaseException):
+class ChatApplicationException(Exception):
     """
     Base exception from with all other applications exceptions will be derived from.
     """
@@ -6,20 +6,14 @@ class ChatApplicationException(BaseException):
     ERROR_CODE = 0
     MESSAGE = "Application Error"
 
-    @property
-    def response_code(self):
-        return self.RESPONSE_CODE
+    @classmethod
+    def __str__(cls):
+        return f"<{cls.__class__.__name__}: ({cls.RESPONSE_CODE}, {cls.ERROR_CODE}, {cls.MESSAGE}"
 
-    @property
-    def error_code(self):
-        return self.ERROR_CODE
-
-    def __str__(self):
-        return f"<{self.__class__.__name__}: ({self.RESPONSE_CODE}, {self.ERROR_CODE}, {self.MESSAGE}"
-
-    def json(self):
+    @classmethod
+    def json(cls):
         return {
-            "error_code": self.ERROR_CODE,
-            "type": self.__class__.__name__,
-            "message": self.MESSAGE
+            "error_code": cls.ERROR_CODE,
+            "type": str(cls.__name__),
+            "msg": cls.MESSAGE
         }

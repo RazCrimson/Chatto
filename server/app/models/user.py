@@ -3,7 +3,7 @@ import datetime
 from flask_bcrypt import generate_password_hash, check_password_hash
 
 from . import db
-from ..exceptions import UserNotFoundException
+from ..exceptions import UserNotFoundError
 
 
 class User(db.Document):
@@ -36,5 +36,5 @@ class User(db.Document):
     def get_user_by_username(cls, username):
         users = cls.objects(username=username)
         if not users:
-            raise UserNotFoundException
+            raise UserNotFoundError
         return users[0]

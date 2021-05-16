@@ -2,7 +2,7 @@ from flask import make_response
 from flask_jwt_extended import set_refresh_cookies, set_access_cookies, get_jwt_identity, unset_jwt_cookies
 
 from ..authentication import JWTHandler
-from ..exceptions import UserNotFoundException, UsernameAlreadyTakenException, InvalidPasswordException
+from ..exceptions import UserNotFoundError, UsernameAlreadyTakenError, InvalidPasswordError
 from ..models import User
 
 
@@ -12,7 +12,7 @@ class UserController:
     def create(cls, username, password) -> User:
         try:
             User.get_user_by_username(username)
-        except UserNotFoundException:
+        except UserNotFoundError:
             new_user = User()
             new_user.username = username
             new_user.password = password
@@ -20,13 +20,13 @@ class UserController:
             resp = make_response({"message": f"User: `{new_user.username}` successfully registered!"}, 201)
             return resp
         else:
-            raise UsernameAlreadyTakenException
+            raise UsernameAlreadyTakenError
 
     @classmethod
     def login(cls, username, password):
         user = User.get_user_by_username(username)
         if not user.check_password(password):
-            raise InvalidPasswordException
+            raise InvalidPasswordError
 
         access_token, refresh_token = JWTHandler.generate_tokens(user)
         resp = make_response({"message": f"Logged in as `{user.username}`"}, 200)

@@ -9,7 +9,7 @@ class DatabaseException(ChatApplicationException):
     MESSAGE = "Database Error"
 
 
-class NotFoundException(DatabaseException):
+class NotFoundError(DatabaseException):
     """
     Raised when a resource can't be found in the database
     """
@@ -18,9 +18,9 @@ class NotFoundException(DatabaseException):
     MESSAGE = "Resource not found!"
 
 
-class UserNotFoundException(NotFoundException):
+class UserNotFoundError(NotFoundError):
     """
-    Raised when a resource can't be found in the database
+    Raised when a user can't be found in the database
     """
     ERROR_CODE = 2101
     MESSAGE = "User not found!"

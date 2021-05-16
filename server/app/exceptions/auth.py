@@ -10,7 +10,7 @@ class AuthException(ChatApplicationException):
     MESSAGE = "Authentication Error"
 
 
-class UsernameAlreadyTakenException(AuthException):
+class UsernameAlreadyTakenError(AuthException):
     """
     Raised when user requests for a already taken username
     """
@@ -18,23 +18,23 @@ class UsernameAlreadyTakenException(AuthException):
     MESSAGE = "Username already taken!"
 
 
-class InvalidPasswordException(AuthException):
+class InvalidPasswordError(AuthException):
     """
     Raised when user sends a wrong password
     """
     ERROR_CODE = 1002
-    MESSAGE = "Wrong Password!"
+    MESSAGE = "Password Mismatch!"
 
 
-class InvalidTokenException(AuthException):
+class InvalidTokenError(AuthException):
     """
     Raised when the access token is invalid
     """
     ERROR_CODE = 1100
-    MESSAGE = "Invalid Access Token!"
+    MESSAGE = "Invalid or missing Token!"
 
 
-class InvalidAccessTokenException(InvalidTokenException):
+class InvalidAccessTokenError(InvalidTokenError):
     """
     Raised when the access token is invalid
     """
@@ -42,7 +42,7 @@ class InvalidAccessTokenException(InvalidTokenException):
     MESSAGE = "Invalid Access Token!"
 
 
-class InvalidRefreshTokenException(InvalidTokenException):
+class InvalidRefreshTokenError(InvalidTokenError):
     """
     Raised when the refresh token is invalid
     """

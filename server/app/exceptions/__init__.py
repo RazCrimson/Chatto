@@ -1,4 +1,4 @@
-from .auth import AuthException, UsernameAlreadyTakenException, InvalidTokenException, InvalidAccessTokenException, \
-    InvalidRefreshTokenException, InvalidPasswordException
+from .auth import AuthException, UsernameAlreadyTakenError, InvalidTokenError, InvalidAccessTokenError, \
+    InvalidRefreshTokenError, InvalidPasswordError
 from .base_exception import ChatApplicationException
-from .db import DatabaseException, NotFoundException, UserNotFoundException
+from .db import DatabaseException, NotFoundError, UserNotFoundError
