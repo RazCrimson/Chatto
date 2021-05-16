@@ -22,16 +22,15 @@ def create_flask_app():
     flask_app.config['JWT_TOKEN_LOCATION'] = ["cookies"]
     flask_app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=10)
     flask_app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=1)
-    jwt.init_app(flask_app)
-
-    # CSRF
     flask_app.config['JWT_ACCESS_CSRF_COOKIE_NAME'] = config.JWT_ACCESS_CSRF_COOKIE_NAME
     flask_app.config['JWT_ACCESS_CSRF_HEADER_NAME'] = config.JWT_ACCESS_CSRF_HEADER_NAME
     flask_app.config['JWT_REFRESH_CSRF_COOKIE_NAME'] = config.JWT_REFRESH_CSRF_COOKIE_NAME
     flask_app.config['JWT_REFRESH_CSRF_HEADER_NAME'] = config.JWT_REFRESH_CSRF_HEADER_NAME
+    flask_app.config['JWT_COOKIE_SECURE'] = config.JWT_COOKIE_SECURE
+    jwt.init_app(flask_app)
 
     # Initializing Bcrypt module
-    bcrypt = Bcrypt(flask_app)
+    Bcrypt(flask_app)
 
     # Initializing API Endpoints
     api.init_app(flask_app)
