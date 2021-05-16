@@ -3,7 +3,7 @@
 Chatto is a simple chat application that allows one to one messaging with end-to-end encryption using [Elliptic-curve Diffie–Hellman](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman). 
 
 * Server - a Flask based web application that uses [SocketIO](https://socket.io/) to send and receive message from the client. 
-* Client - is just a simple CLI based interface to send, receive and view the messages from the server.
+* Client - a simple CLI based interface to send, receive and view the messages from the server.
 
 ## Tools and technology used
 
