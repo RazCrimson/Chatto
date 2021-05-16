@@ -16,7 +16,6 @@ git clone git@github.com:RazCrimson/Chatto.git
 
 ```
 git clone https://github.com/RazCrimson/Chatto.git
-
 ```
 
 ### Installing Dependencies
