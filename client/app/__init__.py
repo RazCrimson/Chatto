@@ -40,7 +40,7 @@ class Client:
         sio.register_namespace(self.chat_client)
 
         print('Establishing a SocketIO connection to the server...')
-        sio.connect(f"wss://{config['DOMAIN']}", namespaces=['/chat'], wait_timeout=30, wait=True)
+        sio.connect(config['WEBSOCKET'], namespaces=['/chat'], wait_timeout=30, wait=True)
         sio.start_background_task(self.message_decryption_loop)
         sio.start_background_task(self.message_display_loop)
 
