@@ -25,13 +25,13 @@ class HTTPClient:
         # Format Request Body
         data = {
             "username": username,
-            "password": hashed_password,
-            "pub_key": public_key,
-            "encrypted_priv_key": encrypted_priv_key
+            "password": hashed_password.decode(),
+            "pub_key": public_key.decode(),
+            "encrypted_priv_key": encrypted_priv_key.decode()
         }
 
         # Parse Response
-        resp = requests.post(config['HOST'] + '/user/register', data)
+        resp = requests.post(config['HOST'] + '/user/register', json=data)
         response_json = json.loads(resp.text)
         msg = response_json['msg']
 
@@ -44,10 +44,10 @@ class HTTPClient:
         hashed_password = b64encode(CryptoHandler.SHA256_hash(password))
         data = {
             "username": username,
-            "password": hashed_password
+            "password": hashed_password.decode()
         }
 
-        res = self.session.post(config['HOST'] + '/user/signin', data)
+        res = self.session.post(config['HOST'] + '/user/signin', json=data)
         if res.status_code != 200:
             raise Exception('Invalid Credentials')
         response_json = json.loads(res.text)
