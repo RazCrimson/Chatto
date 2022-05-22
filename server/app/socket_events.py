@@ -69,9 +69,8 @@ class ChatNamespace(Namespace):
             "message_body": message_body,
             "created_at": str(created_at),
         }
-        if forwarded_at:
-            emit('message', json_data, to=receiver_id)
         emit('message', json_data, to=sender_id)
+        emit('message', json_data, to=receiver_id)
 
     @classmethod
     def on_get_messages(cls, other_user_id):

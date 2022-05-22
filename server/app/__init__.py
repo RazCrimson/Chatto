@@ -36,6 +36,6 @@ def create_flask_app():
     # Initializing API Endpoints
     api.init_app(flask_app)
 
-    socket_io.init_app(flask_app)
+    socket_io.init_app(flask_app, message_queue=config.SOCKET_IO_MESSAGE_QUEUE)
 
     return flask_app
